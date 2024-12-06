@@ -7,15 +7,23 @@ require("dotenv").config();
 const authRoutes = require("./routes/authRoutes");
 const taskRoutes = require("./routes/taskRoutes");
 const profileRoutes = require("./routes/profileRoutes");
+const dotenv = require("dotenv");
+dotenv.config();
 
 app.use(express.json());
 app.use(cors());
 
 const mongoUrl = process.env.MONGODB_URL;
+
 mongoose.connect(mongoUrl, err => {
+  console.log('Inside the mongo');
   if (err) throw err;
   console.log("Mongodb connected...");
 });
+// mongoose
+//   .connect(process.env.MONGODB_URL)
+//   .then(() => console.log("Database Connected Successfully"))
+//   .catch((err) => console.error("Error connecting to MongoDB:", err));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/tasks", taskRoutes);
@@ -23,7 +31,9 @@ app.use("/api/profile", profileRoutes);
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.resolve(__dirname, "../frontend/build")));
-  app.get("*", (req, res) => res.sendFile(path.resolve(__dirname, "../frontend/build/index.html")));
+  app.get("*", (req, res) =>
+    res.sendFile(path.resolve(__dirname, "../frontend/build/index.html"))
+  );
 }
 
 const port = process.env.PORT || 5000;
